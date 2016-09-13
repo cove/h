@@ -9,6 +9,7 @@ import sqlalchemy as sa
 import transaction
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import validates
 
 from memex.db import Base
 from memex.db import mixins
@@ -203,6 +204,14 @@ class DocumentMeta(Base, mixins.Timestamps):
     @hybrid_property
     def claimant_normalized(self):
         return self._claimant_normalized
+
+    @validates('value')
+    def validate_value(self, key, value):
+        if self.type == 'title':
+            for v in value:
+                assert v
+                assert v.strip() == v
+        return value
 
     def __repr__(self):
         return '<DocumentMeta %s>' % self.id

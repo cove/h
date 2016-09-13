@@ -206,6 +206,26 @@ class TestDocumentURI(object):
             db_session.commit()
 
 
+class TestDocumentMeta(object):
+
+    def test_null_titles_are_not_allowed(self):
+        with pytest.raises(AssertionError):
+            document.DocumentMeta(type='title', value=[None])
+
+    def test_empty_string_titles_are_not_allowed(self):
+        with pytest.raises(AssertionError):
+            document.DocumentMeta(type='title', value=[''])
+
+    def test_whitespace_only_titles_are_not_allowed(self):
+        for value in ('  ', '\n ', ' \t'):
+            with pytest.raises(AssertionError):
+                document.DocumentMeta(type='title', value=[value])
+
+    def test_other_types_of_metadata_are_still_allowed_to_be_empty(self):
+        for value in (None, '', '  ', '\n ', ' \t'):
+            document.DocumentMeta(type='foo', value=[value])
+
+
 @pytest.mark.usefixtures(
     'log',
 )
@@ -400,7 +420,7 @@ class TestCreateOrUpdateDocumentMeta(object):
     def test_it_creates_a_new_DocumentMeta_if_there_is_no_existing_one(self, db_session):
         claimant = 'http://example.com/claimant'
         type_ = 'title'
-        value = 'the title'
+        value = ['the title']
         document_ = document.Document()
         created = yesterday()
         updated = now()
@@ -438,7 +458,7 @@ class TestCreateOrUpdateDocumentMeta(object):
     def test_it_updates_an_existing_DocumentMeta_if_there_is_one(self, db_session):
         claimant = 'http://example.com/claimant'
         type_ = 'title'
-        value = 'the title'
+        value = ['the title']
         document_ = document.Document()
         created = yesterday()
         updated = now()
@@ -457,13 +477,13 @@ class TestCreateOrUpdateDocumentMeta(object):
             session=db_session,
             claimant=claimant,
             type=type_,
-            value='new value',
+            value=['new value'],
             document=document.Document(),  # This should be ignored.
             created=now(),  # This should be ignored.
             updated=new_updated,
         )
 
-        assert document_meta.value == 'new value'
+        assert document_meta.value == ['new value']
         assert document_meta.updated == new_updated
         assert document_meta.created == created, "It shouldn't update created"
         assert document_meta.document == document_, (
@@ -577,7 +597,7 @@ class TestCreateOrUpdateDocumentMeta(object):
                     session=db_session,
                     claimant='http://example.com',
                     type='title',
-                    value='My Title',
+                    value=['My Title'],
                     document=document_,
                     created=now(),
                     updated=now(),
@@ -637,7 +657,7 @@ class TestMergeDocuments(object):
                 meta=[document.DocumentMeta(
                     claimant='https://en.wikipedia.org/wiki/Main_Page',
                     type='title',
-                    value='Wikipedia, the free encyclopedia')])
+                    value=['Wikipedia, the free encyclopedia'])])
         duplicate = document.Document(document_uris=[document.DocumentURI(
                 claimant='https://m.en.wikipedia.org/wiki/Main_Page',
                 uri='https://en.wikipedia.org/wiki/Main_Page',
@@ -645,7 +665,7 @@ class TestMergeDocuments(object):
                 meta=[document.DocumentMeta(
                     claimant='https://m.en.wikipedia.org/wiki/Main_Page',
                     type='title',
-                    value='Wikipedia, the free encyclopedia')])
+                    value=['Wikipedia, the free encyclopedia'])])
 
         db_session.add_all([master, duplicate])
         db_session.flush()
