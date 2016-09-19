@@ -43,10 +43,10 @@ test: node_modules/.uptodate
 .PHONE: dev-wait-deps
 dev-wait-deps:
 	@echo Waiting for deps to be ready
-	@for i in {1..5}; do echo trying $(PGHOST)... && nc -vw 3 $(PGHOST) 5432; done
-	@for i in {1..5}; do echo trying $(REDIS_HOST)... && nc -vw 3 $(REDIS_HOST) 6379; done
-	@for i in {1..5}; do echo trying $(AMPQ_HOST)... && nc -vw 3 $(AMPQ_HOST) 5672; done
-	@for i in {1..5}; do echo trying $(ELASTICSEARCH_HOST)... && nc -vw 3 $(ELASTICSEARCH_HOST) 9200; done
+	@for i in {1..5}; do echo trying $(PGHOST)... && nc -vw 3 $(PGHOST) 5432; done && \
+	  for i in {1..5}; do echo trying $(REDIS_HOST)... && nc -vw 3 $(REDIS_HOST) 6379; done && \
+	  for i in {1..5}; do echo trying $(AMPQ_HOST)... && nc -vw 3 $(AMPQ_HOST) 5672; done && \
+	  for i in {1..5}; do echo trying $(ELASTICSEARCH_HOST)... && nc -vw 3 $(ELASTICSEARCH_HOST) 9200; done 
 	@psql -c 'SELECT 1;' || createdb $(PGDATABASE)
 	@echo All deps are ready, starting up h...
 

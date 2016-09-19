@@ -51,7 +51,7 @@ COPY . ./
 # python packages
 ENV PYTHONIOENCODING utf_8
 ENV PYTHONPATH /h:$PYTHONPATH
-RUN pip install -r requirements-dev.in
+RUN pip install --no-cache-dir -r requirements-dev.in
 
 RUN npm -g install gulp
 
