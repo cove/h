@@ -1,4 +1,4 @@
-FROM buildpack-deps:jessie
+FROM debian:jessie
 MAINTAINER Hypothes.is Project and contributors
 
 WORKDIR /h
@@ -8,6 +8,15 @@ EXPOSE 5000
 
 ENV LANG C.UTF-8
 ENV PATH /usr/local/bin:$PATH
+
+# install deps
+RUN apt-get -y update \
+    && apt-get -y install build-essential \
+                          libffi6 libffi-dev libpq5 libpq-dev \
+                          postgresql-client postgresql-common \
+                          python-dev git netcat curl \
+    && curl -o get-pip.py https://bootstrap.pypa.io/get-pip.py \
+    && python get-pip.py
 
 # install latest offical node dist
 # https://github.com/nodejs/docker-node/blob/62a39d8d527a8992734ba2d066c3983fe560ee44/6.6/wheezy/Dockerfile
@@ -37,13 +46,6 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-# install deps
-RUN apt-get -y update \
-    && apt-get -y install libffi6 libffi-dev libpq5 libpq-dev \
-                          postgresql-client postgresql-common \
-                          python-dev git netcat \
-    && curl -o get-pip.py https://bootstrap.pypa.io/get-pip.py \
-    && python get-pip.py
 
 # copy whole src tree in for install, performs better than cherrypicking files
 COPY . ./
