@@ -14,7 +14,7 @@ clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
 	rm -f node_modules/.uptodate .pydeps
-	rm -rf build
+	rm -rf build .hypothesis
 
 ## Run the development H server locally
 .PHONY: dev
