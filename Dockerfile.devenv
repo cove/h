@@ -60,12 +60,17 @@ RUN rm -rf ./* /root/.npm /root/.cache /tmp/*
 
 # docker compose can't determine if each dep service is up
 # so we have to do it
-CMD for i in 1 2 3; do \
+CMD for i in 1 2 3 4 5 6 7 8 9 10; do \
      sleep 1 && \
-     nc -vw $i $PGHOST 5432 && \
-     nc -vw $i $ELASTICSEARCH_HOST 9200 && \
-     nc -vw $i $REDISH_HOST 6379 && \
-     nc -vw $i $AMPQ_HOST 5672 && \
+     echo trying $PGHOST...; \
+     nc -w 3 $PGHOST 5432 && \
+     echo trying $ELASTICSEARCH_HOST...; \
+     nc -w 3 $ELASTICSEARCH_HOST 9200 && \
+     echo trying $REDIS_HOST...; \
+     nc -w 3 $REDIS_HOST 6379 && \
+     echo trying $AMPQ_HOST...; \
+     nc -w 3 $AMPQ_HOST 5672 && \
+     echo All dependencies up, starting up h...; \
      (psql -c "SELECT 1;" || createdb $PGDATABASE && \
      make dev && exit $?); \
     done
