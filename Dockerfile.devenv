@@ -18,7 +18,7 @@ RUN apt-get -y update \
     && curl -o get-pip.py https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py
 
-# install latest offical node dist
+# Install latest offical Node distribution binary.
 # https://github.com/nodejs/docker-node/blob/62a39d8d527a8992734ba2d066c3983fe560ee44/6.6/wheezy/Dockerfile
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
@@ -46,19 +46,18 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-
-# copy whole src tree in for install, performs better than cherrypicking files
+# Copy in the application files.
 COPY . ./
 
-# python packages
+# Install Python packages.
 ENV PYTHONIOENCODING utf_8
 ENV PYTHONPATH /h:$PYTHONPATH
 RUN pip install --no-cache-dir -r requirements-dev.in
 
 RUN npm -g install gulp
 
-# clean up
+# Clean up to reduce image size.
 RUN rm -rf ./* /root/.npm /root/.cache /tmp/*
 
-CMD make dev
+CMD ["make", "dev"]
 

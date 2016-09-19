@@ -46,7 +46,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-# Copy the in the application files.
+# Copy in the application files.
 COPY . ./
 
 # Install Python packages.
@@ -54,7 +54,6 @@ ENV PATH /h/bin:$PATH
 ENV PYTHONIOENCODING utf_8
 ENV PYTHONPATH /h:$PYTHONPATH
 RUN pip install --no-cache-dir -r requirements.txt
-
 
 # Build frontend assets.
 RUN npm install --production \
@@ -72,4 +71,3 @@ RUN groupadd hypothesis && useradd -d /h -g hypothesis hypothesis
 USER hypothesis
 
 CMD ["newrelic-admin", "run-program", "gunicorn", "--paste", "conf/app.ini"]
-
