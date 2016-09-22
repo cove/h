@@ -1,4 +1,4 @@
--r requirements.txt
+-r requirements-production.txt
 
 flake8
 honcho

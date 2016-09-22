@@ -1,0 +1,55 @@
+version: '2'
+services:
+  webserver:
+    extends:
+     file: docker-compose-common.yml
+     service: hcommon
+    command: newrelic-admin run-program gunicorn --paste conf/development-app.ini
+    ports:
+     - '5000:5000'
+    links:
+     - postgres
+     - elasticsearch
+     - rabbit
+     - redis
+     - websocket
+  websocket:
+    extends:
+     file: docker-compose-common.yml
+     service: hcommon
+    command: newrelic-admin run-program gunicorn --reload --paste conf/development-websocket.ini
+    ports:
+     - '5001:5001'
+    links:
+     - postgres
+  worker:
+    extends:
+     file: docker-compose-common.yml
+     service: hcommon
+    command: newrelic-admin run-program hypothesis --dev celery worker --autoreload
+    links:
+     - postgres
+  assetwatch:
+    extends:
+     file: docker-compose-common.yml
+     service: hcommon
+    command: /bin/sh -c "npm install && gulp watch"
+  postgres:
+    image: postgres:9.6
+    env_file: docker-compose-common.env
+    ports:
+     - '5432:5432'
+  elasticsearch:
+    image: nickstenning/elasticsearch-icu
+    ports:
+     - '9200:9200'
+     - '9300:9300'
+  rabbit:
+    image: rabbitmq:3.6.5-management
+    ports:
+     - '5672:5672'
+     - '15672:15672'
+  redis:
+    image: redis:3.2.3
+    ports:
+     - '6379:6379'
