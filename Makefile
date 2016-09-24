@@ -18,8 +18,8 @@ clean:
 
 ## Run the development H server locally
 .PHONY: dev
-dev: build/manifest.json .pydeps
-	@bin/hypothesis devserver
+dev:
+	@UID=`id -u` docker-compose up
 
 ## Build hypothesis/hypothesis docker image
 .PHONY: docker
@@ -36,7 +36,7 @@ test: node_modules/.uptodate
 ################################################################################
 
 # Fake targets to aid with deps installation
-.pydeps: setup.py requirements.txt
+.pydeps: setup.py requirements-production.txt
 	@echo installing python dependencies
 	@pip install --use-wheel -r requirements-dev.in tox
 	@touch $@
