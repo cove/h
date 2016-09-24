@@ -22,6 +22,7 @@ services:
      - '5001:5001'
     links:
      - postgres
+     - rabbit
   worker:
     extends:
      file: docker-compose-common.yml
