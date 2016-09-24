@@ -3,7 +3,7 @@ services:
   webserver:
     extends:
      file: docker-compose-common.yml
-     service: hcommon
+     service: common
     command: newrelic-admin run-program gunicorn --paste conf/development-app.ini
     ports:
      - '5000:5000'
@@ -16,7 +16,7 @@ services:
   websocket:
     extends:
      file: docker-compose-common.yml
-     service: hcommon
+     service: common
     command: newrelic-admin run-program gunicorn --reload --paste conf/development-websocket.ini
     ports:
      - '5001:5001'
@@ -26,14 +26,14 @@ services:
   worker:
     extends:
      file: docker-compose-common.yml
-     service: hcommon
+     service: common
     command: newrelic-admin run-program hypothesis --dev celery worker --autoreload
     links:
      - postgres
   assetwatch:
     extends:
      file: docker-compose-common.yml
-     service: hcommon
+     service: common
     command: /bin/sh -c "npm install && gulp watch"
   postgres:
     image: postgres:9.6
