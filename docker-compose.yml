@@ -4,7 +4,7 @@ services:
     extends:
      file: docker-compose-common.yml
      service: common
-    command: newrelic-admin run-program gunicorn --paste conf/development-app.ini
+    command: gunicorn --paste conf/development-app.ini
     ports:
      - '5000:5000'
     links:
@@ -17,7 +17,7 @@ services:
     extends:
      file: docker-compose-common.yml
      service: common
-    command: newrelic-admin run-program gunicorn --reload --paste conf/development-websocket.ini
+    command: gunicorn --reload --paste conf/development-websocket.ini
     ports:
      - '5001:5001'
     links:
@@ -27,7 +27,7 @@ services:
     extends:
      file: docker-compose-common.yml
      service: common
-    command: newrelic-admin run-program hypothesis --dev celery worker --autoreload
+    command: hypothesis --dev celery worker --autoreload
     links:
      - postgres
   assetwatch:
