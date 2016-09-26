@@ -4,7 +4,8 @@ services:
     extends:
      file: docker-compose-common.yml
      service: common
-    command: gunicorn --paste conf/development-app.ini
+    # XXX: we have to explicity export MODEL_CREATE_ALL to ensure it gets picked up.
+    command: /bin/sh -c "export MODEL_CREATE_ALL='true' && gunicorn --paste conf/development-app.ini"
     ports:
      - '5000:5000'
     links:
