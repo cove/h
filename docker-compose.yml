@@ -34,7 +34,7 @@ services:
   assetwatch:
     extends:
      file: docker-compose-common.yml
-     service: hcommon
+     service: common
     command: /bin/sh -c "npm install && gulp watch"
   postgres:
     image: postgres:9.6
